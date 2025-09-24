@@ -1,0 +1,35 @@
+functional_requirements:
+  hub:
+    - "Host PC must run Selenium Hub as Windows Service"
+    - "Hub auto-start on boot and restart on crash"
+    - "Hub manages sessions and routes requests to nodes"
+  node:
+    - "1 VM = 1 Node"
+    - "Node must run Edge + matching Edge WebDriver"
+    - "Node auto-start via Autologon + Scheduled Task"
+    - "Node auto-recover using watchdog"
+    - "Node auto-register to Hub"
+  scaling:
+    - "Multiple Nodes can be created from one Base VHDX"
+    - "deploy_selenium_node.ps1 must accept parameters (Name, BaseVhdx, SwitchName, HubIp, …)"
+
+non_functional_requirements:
+  - "Scripts must be idempotent (safe to re-run)"
+  - "Base VHDX reproducible via Packer"
+  - "Self-healing (Hub/Node crash recovery)"
+  - "Maintainable: human + AI Agent readable"
+  - "Observability: Hub UI + GET /status API"
+
+constraints:
+  os_platform:
+    - "Host: Windows 10/11 Pro with Hyper-V"
+    - "Node: Windows VM (Edge browser capable)"
+  software_stack:
+    - "Java 17 JRE"
+    - "Selenium Server (Hub/Node same version)"
+    - "Microsoft Edge (Stable) + Edge WebDriver (same major version)"
+  language:
+    - "PowerShell (scripts)"
+    - "Packer HCL (image build)"
+  security:
+    - "Autologon account = least privilege, network isolated"
