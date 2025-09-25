@@ -28,8 +28,7 @@ selenium-grid-deployer/
 ├─ scripts/
 │ ├─ install.ps1 # VM 내부: 필수 SW 설치, 스크립트/스케줄러 등록
 │ ├─ start-node.ps1 # VM 내부: 노드 시작 스크립트(로그온 시)
-│ ├─ watchdog.ps1 # VM 내부: 좀비/충돌 복구
-│ └─ post_build_host.ps1 # (선택) Host: Hub 서비스 설치 + Node VM 다중 생성
+│ └─ watchdog.ps1 # VM 내부: 좀비/충돌 복구
 └─ docs/
 └─ packer.md # (본 문서)
 
@@ -66,7 +65,9 @@ hub_ip = "192.168.0.10"
 
 5.1 packer.pkr.hcl (요약)
 • ISO 경로/해시, Hyper-V 스위치, CPU/메모리, WinRM 접속 정보 등
-• scripts/install.ps1를 호출하여 VM 내부 구성
+• file 프로비저너로 start-node/watchdog 스크립트 업로드 후 powershell 프로비저너가 install.ps1 수행
+• environment vars: selenium_version, hub_ip, grid_user/pass, edge_channel 전달
+• manifest 포스트프로세서로 빌드 산출물 메타데이터 기록
 
 packer {
 required_plugins {
@@ -147,7 +148,7 @@ $env:GRID_PASS="GridUser!ChangeMe"
 packer build `  -var iso_url="file:///D:/ISO/Win11.iso"`
 -var iso_checksum="sha256:<YOUR_ISO_SHA256>" `  -var hub_ip="192.168.0.10"`
 -var admin_pass="$env:ADMIN_PASS" `
-  -var grid_pass="$env:GRID_PASS" `
+-var grid_pass="$env:GRID_PASS" `
 .
 
 6.3 빌드 실행 (var-file 방식)
